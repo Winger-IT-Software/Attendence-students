@@ -234,7 +234,7 @@ function checkAttendance(user, timeData) {
             alert('Already logged in today.');
         } else {
             const loginTime = new Date(`1970-01-01T${timeData.time}`);
-            const cutoffTime = new Date('1970-01-01T09:45:00');
+            const cutoffTime = new Date('1970-01-01T11:00:00');
 
             const status = loginTime > cutoffTime ? 'Late' : 'Present';
             logAttendance(user, timeData, status);

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WIngerIT Attendance System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            max-width: 360px;
+            width: 90%;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        h1, h2 {
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #007bff;
+        }
+        input {
+            width: 97%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            border: none;
+            color: white;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .switch {
+            margin-top: 15px;
+        }
+        .switch span {
+            color: #007bff;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+        .loading-spinner {
+            display: none;
+            margin: 20px auto;
+            width: 40px;
+            height: 40px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #007bff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>WIngeR IT Attendance System</h2>
+        <h1 id="formTitle">Login</h1>
+        <input type="email" id="email" placeholder="Email" />
+        <input type="password" id="password" placeholder="Password" />
+        <button id="actionButton">Login</button>
+        <div class="loading-spinner" id="loadingSpinner"></div>
+        <div class="switch">
+            <span id="switchText">Don't have an account? Sign Up</span>
+        </div>
+    </div>
+
+    <!-- Firebase App (the core Firebase SDK) -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <!-- Firebase Authentication -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <!-- Firebase Realtime Database -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyA1Eu8xyx7OAQ8y4ng-Fu6phrCWJWHiYlc",
+            authDomain: "trial-b04e6.firebaseapp.com",
+            databaseURL: "https://trial-b04e6-default-rtdb.firebaseio.com",
+            projectId: "trial-b04e6",
+            storageBucket: "trial-b04e6.appspot.com",
+            messagingSenderId: "870551973559",
+            appId: "1:870551973559:web:151d8cb3f567a01109e732",
+            measurementId: "G-HM63X09XYF"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+
+        const auth = firebase.auth();
+        const database = firebase.database();
+
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const actionButton = document.getElementById('actionButton');
+        const formTitle = document.getElementById('formTitle');
+        const switchText = document.getElementById('switchText');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+
+        let isLogin = true; // Start with login form
+
+        actionButton.addEventListener('click', () => {
+            const email = emailInput.value.trim();
+            const password = passwordInput.value.trim();
+            if (email && password) {
+                toggleSpinner(true);  // Show loading spinner
+                if (isLogin) {
+                    login(email, password);
+                } else {
+                    signup(email, password);
+                }
+            } else {
+                alert('Please enter both email and password.');
+            }
+        });
+
+        switchText.addEventListener('click', () => {
+            isLogin = !isLogin;
+            if (isLogin) {
+                formTitle.textContent = 'Login';
+                actionButton.textContent = 'Login';
+                switchText.textContent = "Don't have an account? Sign Up";
+            } else {
+                formTitle.textContent = 'Sign Up';
+                actionButton.textContent = 'Sign Up';
+                switchText.textContent = "Already have an account? Login";
+            }
+        });
+
+        function login(email, password) {
+            auth.signInWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    // Handle login success
+                    alert('Logged in successfully!');
+                    toggleSpinner(false);  // Hide loading spinner
+                })
+                .catch((error) => {
+                    // Handle login errors
+                    alert('Failed to log in: ' + error.message);
+                    toggleSpinner(false);  // Hide loading spinner
+                });
+        }
+
+        function signup(email, password) {
+            auth.createUserWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    // Handle signup success
+                    alert('Account created successfully!');
+                    toggleSpinner(false);  // Hide loading spinner
+                })
+                .catch((error) => {
+                    // Handle signup errors
+                    alert('Failed to create account: ' + error.message);
+                    toggleSpinner(false);  // Hide loading spinner
+                });
+        }
+
+        function toggleSpinner(show) {
+            loadingSpinner.style.display = show ? 'block' : 'none';
+            actionButton.disabled = show;
+        }
+    </script>
+</body>
+</html>

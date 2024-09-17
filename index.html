@@ -225,40 +225,41 @@
             }
         }
 
-        function checkAttendance(user, timeData) {
-            const email = user.email.replace(/\./g, '_'); // Replacing '.' with '_' to use as a key in Firebase
-            const attendanceRef = database.ref('attendance/' + email + '/' + timeData.date);
+function checkAttendance(user, timeData) {
+    const email = user.email.replace(/\./g, '_'); // Replacing '.' with '_' to use as a key in Firebase
+    const attendanceRef = database.ref('students-attendance/' + email + '/' + timeData.date);
 
-            attendanceRef.once('value').then((snapshot) => {
-                if (snapshot.exists()) {
-                    alert('Already logged in today.');
-                } else {
-                    const loginTime = new Date(`1970-01-01T${timeData.time}`);
-                    const cutoffTime = new Date('1970-01-01T09:45:00');
+    attendanceRef.once('value').then((snapshot) => {
+        if (snapshot.exists()) {
+            alert('Already logged in today.');
+        } else {
+            const loginTime = new Date(`1970-01-01T${timeData.time}`);
+            const cutoffTime = new Date('1970-01-01T09:45:00');
 
-                    const status = loginTime > cutoffTime ? 'Late' : 'Present';
-                    logAttendance(user, timeData, status);
-                    alert('Login successful!');
-                }
-                showLoadingSpinner(false);
-            }).catch((error) => {
-                console.error('Error checking attendance:', error);
-                alert('Error: ' + error.message);
-                showLoadingSpinner(false);
-            });
+            const status = loginTime > cutoffTime ? 'Late' : 'Present';
+            logAttendance(user, timeData, status);
+            alert('Login successful!');
         }
+        showLoadingSpinner(false);
+    }).catch((error) => {
+        console.error('Error checking attendance:', error);
+        alert('Error: ' + error.message);
+        showLoadingSpinner(false);
+    });
+}
 
-        function logAttendance(user, timeData, status) {
-            const email = user.email.replace(/\./g, '_'); // Replacing '.' with '_' to use as a key in Firebase
-            const attendanceRef = database.ref('attendance/' + email + '/' + timeData.date);
+function logAttendance(user, timeData, status) {
+    const email = user.email.replace(/\./g, '_'); // Replacing '.' with '_' to use as a key in Firebase
+    const attendanceRef = database.ref('students-attendance/' + email + '/' + timeData.date);
 
-            attendanceRef.set({
-                date: timeData.date,
-                name: user.email,
-                status: status,
-                time: timeData.time
-            });
-        }
+    attendanceRef.set({
+        date: timeData.date,
+        name: user.email,
+        status: status,
+        time: timeData.time
+    });
+}
+
 
         function showLoadingSpinner(show) {
             loadingSpinner.style.display = show ? 'block' : 'none';
